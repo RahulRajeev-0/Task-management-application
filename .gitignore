@@ -1,0 +1,46 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+venv/
+env/
+
+# Django specific files
+db.sqlite3
+*.log
+
+# Static and media files
+staticfiles/
+media/
+
+# Local development files
+*.env
+*.json
+*.xml
+*.sqlite3
+*.lock
+*.pkl
+
+# Ignore .mypy_cache and coverage reports
+.mypy_cache/
+.coverage
+htmlcov/
+*.cover
+
+# IDE files
+.idea/
+.vscode/
+
+# Test coverage and pytest cache
+.tox/
+.pytest_cache/
+
+# Pip dependency files
+pip-log.txt
+pip-delete-this-directory.txt
+
+# Ignore migrations if necessary
+**/migrations/*.pyc
+**/migrations/*.pyo
