@@ -42,3 +42,5 @@ def validate_and_create_user(request, data):
         user.save()
 
     return True, user
+
+
