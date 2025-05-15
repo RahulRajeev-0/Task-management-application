@@ -11,6 +11,7 @@ def validate_and_create_user(request, data):
     last_name = data.get("last_name", "").strip()
     password1 = data.get("password1", "")
     password2 = data.get("password2", "")
+    role = data.get("role", "")
 
     if not all([username, first_name, last_name, password1, password2]):
         return False, "All fields are required."
@@ -36,5 +37,8 @@ def validate_and_create_user(request, data):
         last_name=last_name,
         password=password1,
     )
+    if role:
+        user.role = role
+        user.save()
 
     return True, user
