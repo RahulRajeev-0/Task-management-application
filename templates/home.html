@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block title %}Home - Admin Panel{% endblock %}
+
+{% block header %}User Management{% endblock %}
+
+{% block content %}
+<div class="space-y-8">
+    <!-- Filter & Search -->
+    <form method="GET" class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded shadow">
+        <input type="text" name="search" value="{{ request.GET.search|default_if_none:'' }}" placeholder="Search by username"
+            class="border p-2 rounded w-full md:w-1/3" />
+
+        <select name="role" class="border p-2 rounded w-full md:w-1/4">
+            <option value="">All Roles</option>
+            <option value="admin" {% if request.GET.role == 'admin' %}selected{% endif %}>Admin</option>
+            <option value="user" {% if request.GET.role == 'user' %}selected{% endif %}>User</option>
+        </select>
+
+        <button type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700 w-full md:w-auto">Filter</button>
+           
+            <button id="openModal" type="button"
+            
+        class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+        + Create User
+    </button>
+    </form>
+
+    <!-- User List Table -->
+    <div class="bg-white p-6 rounded shadow overflow-x-auto">
+        <h2 class="text-xl font-semibold mb-4">Users</h2>
+        <table class="w-full text-left table-auto">
+            <thead>
+                <tr class="bg-gray-100">
+                    <th class="px-4 py-2">Username</th>
+                    <th class="px-4 py-2">Role</th>
+                    <th class="px-4 py-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr class="border-b">
+                    <td class="px-4 py-2">{{ user.username }}</td>
+                    <td class="px-4 py-2">
+                       {% if user.role == "USER"%}
+                       User
+                       {% elif user.role == "ADMIN"%}
+                        Admin
+                       {% else %}
+                        Super Admin
+                       {% endif%}
+                    </td>
+                    <td class="px-4 py-2">
+                        {% comment %} <form method="POST" action="{% url 'toggle_user_role' user.id %}">
+                            {% csrf_token %}
+                            {% if user.is_staff %}
+                                <button type="submit"
+                                    class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600">
+                                    Demote
+                                </button>
+                            {% else %}
+                                <button type="submit"
+                                    class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">
+                                    Promote
+                                </button>
+                            {% endif %}
+                        </form> {% endcomment %}
+                    </td>
+                </tr>
+                {% empty %}
+                <tr>
+                    <td colspan="4" class="text-center py-4 text-gray-500">No users found.</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+
+    <!-- Modal -->
+<div id="createUserModal"
+     class="fixed inset-0 z-50 hidden items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm min-h-screen">
+
+    <div class="bg-white rounded-lg w-[90%] md:w-[500px] p-6 relative shadow-lg">
+        <!-- Close button -->
+        <button id="closeModal" class="absolute top-2 right-2 text-gray-600 hover:text-black text-2xl">&times;</button>
+
+        <h2 class="text-xl font-semibold mb-4">Create New User</h2>
+        <form method="POST" class="space-y-4">
+            {% csrf_token %}
+            <div class="grid gap-4">
+                <input type="text" name="username" placeholder="Username" required class="border p-2 rounded w-full">
+                <input type="email" name="email" placeholder="Email" required class="border p-2 rounded w-full">
+                <input type="password" name="password" placeholder="Password" required class="border p-2 rounded w-full">
+            </div>
+            <div class="flex justify-end">
+                <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">
+                    Create User
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    const openBtn = document.getElementById("openModal");
+    const closeBtn = document.getElementById("closeModal");
+    const modal = document.getElementById("createUserModal");
+
+    openBtn.addEventListener("click", () => {
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+    });
+
+    closeBtn.addEventListener("click", () => {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    });
+
+    // Close modal on ESC key press
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") {
+            modal.classList.add("hidden");
+            modal.classList.remove("flex");
+        }
+    });
+
+    modal.addEventListener("click", function (e) {
+    if (e.target === modal) {
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+    }
+});
+
+</script>
+
+</div>
+{% endblock %}

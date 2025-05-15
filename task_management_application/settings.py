@@ -28,6 +28,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     # apps
     'user',
+    'admin_panel',
 
 ]
 
@@ -61,7 +62,7 @@ TEMPLATES = [
 WSGI_APPLICATION = 'task_management_application.wsgi.application'
 
 AUTH_USER_MODEL = 'user.CustomUser'
-
+LOGIN_URL = 'login'
 
 # database
 DATABASES = {
