@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class UserRoleAuthConfig(AppConfig):
+class UserConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'user_role_auth'
+    name = 'user'

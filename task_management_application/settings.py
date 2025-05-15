@@ -26,9 +26,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-
     # apps
-    'user_role_auth',
+    'user',
 
 ]
 
@@ -60,6 +59,8 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'task_management_application.wsgi.application'
+
+AUTH_USER_MODEL = 'user.CustomUser'
 
 
 # database
