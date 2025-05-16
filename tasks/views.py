@@ -5,6 +5,11 @@ from .models import Task
 from django.utils import timezone
 from django.http import JsonResponse
 from django.views.decorators.http import require_POST
+# for rest framework and api
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
+from rest_framework import status
 
 # Create your views here.
 
@@ -187,5 +192,35 @@ def task_detail_view(request, task_id):
         messages.error(request, "You are not authorized to view this task.")
         return redirect('task_management')
     return render(request, 'task_detail.html', {'task': task})
+
+
+
+
+class TaskReportView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, task_id):
+        try:
+            task = Task.objects.get(id=task_id)
+        except Task.DoesNotExist:
+            return Response({"error": "Task not found."}, status=status.HTTP_404_NOT_FOUND)
+
+        user = request.user
+        if not (user.role in ['ADMIN', 'SUPERADMIN']):
+            return Response({"error": "You do not have permission to view this report."},
+                            status=status.HTTP_403_FORBIDDEN)
+
+        if task.status != 'COMPLETED':
+            return Response({"error": "Report is only available for completed tasks."},
+                            status=status.HTTP_400_BAD_REQUEST)
+        
+    
+        return Response({
+            "title": task.title,
+            "assigned_to": task.assigned_to.username,
+            "completed_on": task.updated_at.strftime('%Y-%m-%d %H:%M'),
+            "worked_hours": task.worked_hours,
+            "completion_report": task.completion_report
+        }, status=status.HTTP_200_OK)
 
 

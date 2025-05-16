@@ -6,4 +6,7 @@ urlpatterns = [
     path('edit/<int:task_id>/', views.edit_task_view, name='edit_task'),
     path('delete/<int:task_id>/', views.delete_task_view, name='delete_task'),
     path('detail/<int:task_id>/', views.task_detail_view, name='task_detail'),
+
+    # API endpoint to get task report
+    path('api/task/<int:task_id>/report/', views.TaskReportView.as_view(), name='task_report'),
 ]
