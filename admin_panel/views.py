@@ -78,3 +78,47 @@ def toggle_user_role_view(request, user_id):
 
     user.save()
     return redirect('home')
+
+
+@login_required
+def assign_admin_to_user(request, user_id):
+    if request.user.role != 'SUPER_ADMIN':
+        messages.error(request, "Access denied. Only Super Admins can assign users to admins.")
+        return redirect('home')
+
+    if request.method == "POST":
+        try:
+            user = User.objects.get(id=user_id)
+        except User.DoesNotExist:
+            messages.error(request, "The user you are trying to assign does not exist.")
+            return redirect('home')
+
+        admin_id = request.POST.get('assigned_admin_id')
+
+        if not admin_id:
+            messages.error(request, "Please select a valid admin from the list.")
+            return redirect('home')
+
+        # Check if the selected ID corresponds to an admin
+        try:
+            admin_user = User.objects.get(id=admin_id, role='ADMIN')
+        except User.DoesNotExist:
+            messages.error(request, "The selected admin does not exist or is not an admin.")
+            return redirect('home')
+
+        # Only normal users should be assigned
+        if user.role != 'USER':
+            messages.error(request, "Only users with the role 'USER' can be assigned to admins.")
+            return redirect('home')
+
+        # Prevent reassigning to the same admin
+        if user.assigned_admin == admin_user:
+            messages.info(request, f"User {user.username} is already assigned to Admin {admin_user.username}.")
+            return redirect('home')
+
+        # Assign the user
+        user.assigned_admin = admin_user
+        user.save()
+        messages.success(request, f"Successfully assigned {user.username} to Admin {admin_user.username}.")
+
+    return redirect('home')

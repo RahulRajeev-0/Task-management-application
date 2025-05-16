@@ -43,78 +43,94 @@
     <!-- User List Table -->
     <div class="bg-white p-6 rounded shadow overflow-x-auto">
         <h2 class="text-xl font-semibold mb-4">Users</h2>
-        <table class="w-full text-left table-auto">
-            <thead>
-                <tr class="bg-gray-100">
-                    <th class="px-4 py-2">Username</th>
-                    <th class="px-4 py-2">Role</th>
-                    <th class="px-4 py-2">Actions</th>
-                    <th class="px-4 py-2">Delete</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for user in users %}
-                <tr class="border-b">
-                    <td class="px-4 py-2">{{ user.username }}</td>
-                    <td class="px-4 py-2">
-                       {% if user.role == "USER"%}
-                       User
-                       {% elif user.role == "ADMIN"%}
-                        Admin
-                       {% else %}
-                        Super Admin
-                       {% endif%}
-                    <td class="px-4 py-2">
-    {% if request.user.id == user.id or request.user.role != "SUPER_ADMIN" %}
-        <button type="button" disabled class="bg-gray-300 text-white px-3 py-1 rounded text-sm opacity-60 cursor-not-allowed">
-            {% if user.role == "USER" %}
-                Promote to Admin
-            {% elif user.role == "ADMIN" %}
-                Demote to User
-            {% else %}
-                No Action
-            {% endif %}
-        </button>
-    {% else %}
-        <form method="POST" action="{% url 'toggle_user_role' user.id %}">
-            {% csrf_token %}
-            <button type="submit"
-                class="{% if user.role == 'USER' %}bg-green-600 hover:bg-green-700{% else %}bg-yellow-500 hover:bg-yellow-600{% endif %} text-white px-3 py-1 rounded text-sm">
+        <table class="w-full text-left table-auto border border-gray-200 rounded">
+    <thead>
+        <tr class="bg-gray-100">
+            <th class="px-4 py-2">Username</th>
+            <th class="px-4 py-2">Role</th>
+            <th class="px-4 py-2">Manage Role</th>
+            <th class="px-4 py-2">Assign Admin</th>
+            <th class="px-4 py-2">Delete</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for user in users %}
+        <tr class="border-b hover:bg-gray-50 transition">
+            <td class="px-4 py-2">{{ user.username }}</td>
+            <td class="px-4 py-2">
                 {% if user.role == "USER" %}
-                    Promote to Admin
+                    User
                 {% elif user.role == "ADMIN" %}
-                    Demote to User
+                    Admin
                 {% else %}
-                    No Action
+                    Super Admin
                 {% endif %}
-            </button>
-        </form>
-    {% endif %}
-    
-</td>
-  <td class="px-4 py-2">
-    {% if request.user.role == "SUPER_ADMIN" and request.user.id != user.id %}
-    <form method="POST" action="{% url 'delete_user' user.id %}" onsubmit="return confirm('Are you sure you want to delete {{ user.username }}?');" class="inline">
-        {% csrf_token %}
-        <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded text-sm hover:bg-red-700 ml-2">
-            Delete
-        </button>
-    </form>
-{% else %}
-    <button type="button" disabled class="bg-gray-300 text-white px-3 py-1 rounded text-sm ml-2 opacity-60 cursor-not-allowed">
-        Delete
-    </button>
-{% endif %}
-  </td>
+            </td>
 
-                </tr>
-                {% empty %}
-                <tr>
-                    <td colspan="4" class="text-center py-4 text-gray-500">No users found.</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
+            <!-- Manage Role -->
+            <td class="px-4 py-2">
+                {% if request.user != user and request.user.role == "SUPER_ADMIN" %}
+                <form method="POST" action="{% url 'toggle_user_role' user.id %}">
+                    {% csrf_token %}
+                    {% if user.role == "USER" %}
+                        <button type="submit" class="bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700 text-sm w-full">
+                            Promote to Admin
+                        </button>
+                    {% elif user.role == "ADMIN" %}
+                        <button type="submit" class="bg-yellow-500 text-white px-3 py-1 rounded hover:bg-yellow-600 text-sm w-full">
+                            Demote to User
+                        </button>
+                    {% endif %}
+                </form>
+                {% else %}
+                <span class="text-gray-400 text-sm">No Access</span>
+                {% endif %}
+            </td>
+
+            <!-- Assign Admin -->
+            <td class="px-4 py-2">
+                {% if request.user.role == "SUPER_ADMIN" and user.role == "USER" %}
+                <form method="POST" action="{% url 'assign_admin_to_user' user.id %}" class="flex items-center gap-2">
+                    {% csrf_token %}
+                    <select name="assigned_admin_id" class="border px-2 py-1 rounded text-sm w-32">
+                        <option value="">-- Select --</option>
+                        {% for admin in users %}
+                            {% if admin.role == "ADMIN"%}
+                            <option value="{{ admin.id }}" {% if user.assigned_admin == admin %}selected{% endif %}>
+                                {{ admin.username }}
+                            </option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <button type="submit" class="bg-blue-500 text-white px-2 py-1 rounded text-xs">Assign</button>
+                </form>
+                {% else %}
+                <span class="text-gray-400 text-sm">Not Applicable</span>
+                {% endif %}
+            </td>
+
+            <!-- Delete User -->
+            <td class="px-4 py-2">
+                {% if request.user.role == "SUPER_ADMIN" and request.user != user %}
+                <form method="POST" action="{% url 'delete_user' user.id %}">
+                    {% csrf_token %}
+                    <button type="submit" class="bg-red-600 text-white px-3 py-1 rounded hover:bg-red-700 text-sm w-full">
+                        Delete
+                    </button>
+                </form>
+                {% else %}
+                <span class="text-gray-400 text-sm">No Access</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% empty %}
+        <tr>
+            <td colspan="5" class="text-center py-4 text-gray-500">No users found.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
     </div>
 
 
