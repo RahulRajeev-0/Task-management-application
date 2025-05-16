@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto p-6 bg-white rounded shadow mt-8">
+    <h2 class="text-2xl font-bold mb-4">Task Details</h2>
+    <div class="mb-4">
+        <span class="font-semibold">Title:</span> {{ task.title }}
+    </div>
+    <div class="mb-4">
+        <span class="font-semibold">Description:</span> {{ task.description|default:'-' }}
+    </div>
+    <div class="mb-4">
+        <span class="font-semibold">Assigned User:</span> {{ task.assigned_to.username }}
+        {% if task.assigned_to.assigned_admin %}
+            <span class="ml-2 text-gray-500">(Admin: {{ task.assigned_to.assigned_admin.username }})</span>
+        {% endif %}
+    </div>
+    <div class="mb-4">
+        <span class="font-semibold">Status:</span> 
+        {% if task.status == 'PENDING' %}
+            <span class="text-yellow-600 font-medium">Pending</span>
+        {% elif task.status == 'IN_PROGRESS' %}
+            <span class="text-blue-600 font-medium">In Progress</span>
+        {% else %}
+            <span class="text-green-600 font-medium">Completed</span>
+        {% endif %}
+    </div>
+    <div class="mb-4">
+        <span class="font-semibold">Due Date:</span> {{ task.due_date|date:'M d, Y' }}
+    </div>
+    {% if task.status == 'COMPLETED' %}
+    <div class="mb-4">
+        <span class="font-semibold">Completion Report:</span> {{ task.completion_report|default:'-' }}
+    </div>
+    <div class="mb-4">
+        <span class="font-semibold">Worked Hours:</span> {{ task.worked_hours|default:'-' }}
+    </div>
+    {% endif %}
+    <div class="mb-4">
+        <span class="font-semibold">Created At:</span> {{ task.created_at|date:'M d, Y H:i' }}
+    </div>
+    <div class="mb-4">
+        <span class="font-semibold">Last Updated:</span> {{ task.updated_at|date:'M d, Y H:i' }}
+    </div>
+    <a href="{% url 'task_management' %}" class="inline-block mt-4 bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Back to Task Management</a>
+</div>
+{% endblock %}
