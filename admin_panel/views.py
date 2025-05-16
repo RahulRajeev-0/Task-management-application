@@ -14,6 +14,8 @@ from user.helper import validate_and_create_user
 
 User = get_user_model()
 
+# Admin panel User management views
+
 @login_required
 def admin_panel_home_view(request):
     if request.user.role not in ['ADMIN', 'SUPER_ADMIN']:
