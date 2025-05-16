@@ -17,8 +17,9 @@
         <div class="h-full flex flex-col">
             <div class="p-4 border-b font-bold text-xl">Admin Panel</div>
             <nav class="flex-1 p-4 space-y-2 overflow-y-auto">
-                <a href="/" class="block text-gray-700 hover:bg-blue-100 p-2 rounded">Dashboard</a>
-                <a href="/user" class="block text-gray-700 hover:bg-blue-100 p-2 rounded">Users</a>
+                <a href="{% url 'home' %}" class="block text-gray-700 hover:bg-blue-100 p-2 rounded">User Management</a>
+                <a href="{% url 'task_management'%}" class="block text-gray-700 hover:bg-blue-100 p-2 rounded">Task Management</a>
+
                 <a href="#" class="block text-gray-700 hover:bg-blue-100 p-2 rounded">Settings</a>
                 <a href="{% url 'logout' %}" class="block text-red-600 hover:bg-red-100 p-2 rounded">Logout</a>
             </nav>

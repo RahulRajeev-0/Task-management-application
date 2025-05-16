@@ -6,20 +6,19 @@
 
 {% block content %}
 <div class="space-y-8">
-    <!-- Filter & Search -->
-     {% if messages %}
-    {% for message in messages %}
-        <div class="mb-4 p-4 text-white text-center rounded-lg shadow-lg 
-                    {% if message.tags == 'success' %} bg-green-500 
-                    {% elif message.tags == 'error' %} bg-red-500 
-                    {% elif message.tags == 'warning' %} bg-yellow-500 
-                    {% else %} bg-blue-500 {% endif %}">
-            {{ message }}
+    {% if messages %}
+    <div id="msgBox" class="mb-4">
+        {% for message in messages %}
+        <div class="flex items-center justify-between px-4 py-3 rounded text-white mb-2
+            {% if message.tags == 'success' %}bg-green-500{% elif message.tags == 'error' %}bg-red-500{% elif message.tags == 'warning' %}bg-yellow-500 text-black{% else %}bg-blue-500{% endif %}">
+            <span>{{ message }}</span>
+            <button onclick="this.parentElement.style.display='none'" class="ml-4 text-2xl leading-none focus:outline-none">&times;</button>
         </div>
-    {% endfor %}
-{% endif %}
+        {% endfor %}
+    </div>
+    {% endif %}
 
-      
+    <!-- Filter & Search -->
     <form method="GET" class="flex flex-col md:flex-row items-center justify-between gap-4 bg-white p-4 rounded shadow">
         <input type="text" name="search" value="{{ request.GET.search|default_if_none:'' }}" placeholder="Search by username"
             class="border p-2 rounded w-full md:w-1/3" />
