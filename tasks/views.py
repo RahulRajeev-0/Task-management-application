@@ -187,3 +187,5 @@ def task_detail_view(request, task_id):
         messages.error(request, "You are not authorized to view this task.")
         return redirect('task_management')
     return render(request, 'task_detail.html', {'task': task})
+
+

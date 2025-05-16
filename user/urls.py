@@ -14,4 +14,8 @@ urlpatterns = [
     path('api/login/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
 
+    # endpoint to get user tasks
+    path('api/user/tasks/', views.UserTaskView.as_view(), name='user_tasks'),
+    path('api/user/tasks/<int:task_id>/', views.UserTaskView.as_view(), name='user_tasks'),
+
 ]
