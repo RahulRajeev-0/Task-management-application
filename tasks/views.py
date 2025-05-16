@@ -8,13 +8,7 @@ from django.views.decorators.http import require_POST
 
 # Create your views here.
 
-
-# create task 
-
-# listing all tasks
-
 User = get_user_model()
-
 
 def task_management_view(request):
     if request.user.role not in ['ADMIN', 'SUPER_ADMIN']:
@@ -160,7 +154,6 @@ def edit_task_view(request, task_id):
 
 @require_POST
 def delete_task_view(request, task_id):
-    User = get_user_model()
     task = get_object_or_404(Task, id=task_id)
 
     # Only super admin or admin can delete
@@ -182,7 +175,6 @@ def delete_task_view(request, task_id):
 
 
 def task_detail_view(request, task_id):
-    User = get_user_model()
     task = get_object_or_404(Task, id=task_id)
     # Only super admin or admin (for their users) can view details
     if request.user.role == 'SUPER_ADMIN':
